@@ -4,7 +4,8 @@ from typing import List
 
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain.embeddings.base import Embeddings
-from langchain_community.embeddings.ollama import OllamaEmbeddings
+# Updated import to use OllamaEmbeddings from langchain_ollama
+from langchain_ollama import OllamaEmbeddings
 from langchain.schema import Document
 from vector_store.chromadb import ChromaStore
 

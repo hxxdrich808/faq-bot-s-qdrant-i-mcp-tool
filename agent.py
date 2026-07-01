@@ -2,7 +2,8 @@ import os
 from typing import List, Tuple
 
 import httpx
-from langchain_ollama import Ollama
+# Added missing import for OllamaEmbeddings
+from langchain_ollama import Ollama, OllamaEmbeddings
 from langchain.schema import Document
 from langchain.tools import Tool
 from vector_store.chromadb import ChromaStore
@@ -50,6 +51,7 @@ def search_course_docs(query: str, k: int = 3) -> List[Tuple[str, str]]:
     Query Chroma for top‑k relevant document snippets.
     Returns list of (text, source) tuples.
     """
+    # Instantiate OllamaEmbeddings correctly
     embedder = OllamaEmbeddings(model="nomic-embed-text")
     store = ChromaStore(collection_name="chroma_faq")
     query_emb = embedder.embed_query(query)
