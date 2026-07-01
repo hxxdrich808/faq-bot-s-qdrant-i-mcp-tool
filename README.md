@@ -1,6 +1,6 @@
 # FAQ‑bot Project
 
-This repository contains a simple FAQ bot that uses **ChromaDB** for local document search and an MCP‑style tool for fetching course metadata.
+This repository contains a simple FAQ bot that uses **Qdrant** for local document search and an MCP‑style tool for fetching course metadata.
 
 ## Requirements
 
@@ -12,7 +12,7 @@ pip install -r requirements.txt
 
 ## Running the Bot
 
-1. Load documents into Chroma:
+1. Load documents into Qdrant:
    ```bash
    python ingest_docs.py
    ```

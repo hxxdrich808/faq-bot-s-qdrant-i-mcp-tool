@@ -6,7 +6,7 @@ import httpx
 from langchain_ollama import Ollama, OllamaEmbeddings
 from langchain.schema import Document
 from langchain.tools import Tool
-from vector_store.chromadb import ChromaStore
+from vector_store.qdrant import QdrantStore
 from langchain.prompts.chat import (
     ChatPromptTemplate,
     HumanMessagePromptTemplate,
@@ -45,22 +45,22 @@ Output must be a JSON string containing relevant information.
 )
 
 
-# ---------- Chroma Search Tool ----------
+# ---------- Qdrant Search Tool ----------
 def search_course_docs(query: str, k: int = 3) -> List[Tuple[str, str]]:
     """
-    Query Chroma for top‑k relevant document snippets.
+    Query Qdrant for top‑k relevant document snippets.
     Returns list of (text, source) tuples.
     """
     # Instantiate OllamaEmbeddings correctly
     embedder = OllamaEmbeddings(model="nomic-embed-text")
-    store = ChromaStore(collection_name="chroma_faq")
+    store = QdrantStore(collection_name="qdrant_faq")
     query_emb = embedder.embed_query(query)
     results = store.search(query_embedding=query_emb[0], k=k)
     store.close()
     return results
 
 
-def chroma_search_tool_factory(k: int = 3):
+def qdrant_search_tool_factory(k: int = 3):
     def _search(query: str) -> str:
         snippets = search_course_docs(query, k=k)
         # Format as JSON array of objects
@@ -74,11 +74,11 @@ def chroma_search_tool_factory(k: int = 3):
     return _search
 
 
-chroma_tool = Tool(
+qdrant_tool = Tool(
     name="search_course_docs",
-    func=chroma_search_tool_factory(k=3),
+    func=qdrant_search_tool_factory(k=3),
     description="""
-Use this tool to search the course FAQ documents stored in Chroma.
+Use this tool to search the course FAQ documents stored in Qdrant.
 Provide a natural language question about the content of the course.
 Output must be a JSON array of objects with 'text' and 'source'.
 """,
@@ -88,7 +88,7 @@ Output must be a JSON array of objects with 'text' and 'source'.
 # ---------- Agent ----------
 def create_agent() -> AgentExecutor:
     llm = Ollama(model="llama3.1")
-    tools = [chroma_tool, mcp_meta_tool]
+    tools = [qdrant_tool, mcp_meta_tool]
 
     prompt = ChatPromptTemplate.from_messages(
         [
@@ -97,7 +97,7 @@ def create_agent() -> AgentExecutor:
 You are an assistant that helps students with course information.
 When answering a question, you must decide whether the answer comes from the FAQ documents (use search_course_docs) or from the course metadata (use fetch_course_meta).
 Do NOT use both tools unless absolutely necessary.
-Always include 'source' in your final answer: either 'chroma' or 'mcp_meta'.
+Always include 'source' in your final answer: either 'qdrant' or 'mcp_meta'.
 """
             ),
             HumanMessagePromptTemplate.from_template("{input}"),
