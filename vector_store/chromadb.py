@@ -1,5 +1,6 @@
 import os
 from typing import List, Tuple
+
 from chromadb import Client
 from chromadb.config import Settings
 from langchain.schema import Document

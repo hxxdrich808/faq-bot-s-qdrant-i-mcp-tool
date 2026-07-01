@@ -1,6 +1,7 @@
 import os
 from pathlib import Path
 from typing import List
+
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain.embeddings.base import Embeddings
 from langchain_community.embeddings.ollama import OllamaEmbeddings

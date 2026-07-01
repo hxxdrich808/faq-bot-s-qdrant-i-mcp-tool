@@ -7,11 +7,11 @@ def main():
     subparsers = parser.add_subparsers(dest="command")
 
     # Predefined questions
-    parser_qdrant1 = subparsers.add_parser("q1", help="Ask about course content (Chroma)")
-    parser_qdrant2 = subparsers.add_parser("q2", help="Ask about prerequisites (Chroma)")
-    parser_mcp = subparsers.add_parser("mcp", help="Ask about schedule (MCP tool)")
+    subparsers.add_parser("q1", help="Ask about course content (Chroma)")
+    subparsers.add_parser("q2", help="Ask about prerequisites (Chroma)")
+    subparsers.add_parser("mcp", help="Ask about schedule (MCP tool)")
 
-    parser_interactive = subparsers.add_parser("interactive", help="Interactive mode")
+    subparsers.add_parser("interactive", help="Interactive mode")
 
     args = parser.parse_args()
 

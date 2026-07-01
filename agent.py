@@ -1,12 +1,17 @@
 import os
 from typing import List, Tuple
+
 import httpx
-from langchain.tools import Tool
-from langchain_community.embeddings.ollama import OllamaEmbeddings
+from langchain_ollama import Ollama
 from langchain.schema import Document
+from langchain.tools import Tool
 from vector_store.chromadb import ChromaStore
-from langchain.chat_models import ChatOllama
-from langchain.agents import AgentExecutor, ZeroShotAgent
+from langchain.prompts.chat import (
+    ChatPromptTemplate,
+    HumanMessagePromptTemplate,
+    SystemMessagePromptTemplate,
+)
+from langchain.agents import RunnableAgent, AgentExecutor
 
 
 # ---------- MCP‑style Tool ----------
@@ -80,20 +85,26 @@ Output must be a JSON array of objects with 'text' and 'source'.
 
 # ---------- Agent ----------
 def create_agent() -> AgentExecutor:
-    llm = ChatOllama(model="llama3.1")
+    llm = Ollama(model="llama3.1")
     tools = [chroma_tool, mcp_meta_tool]
-    prompt = ZeroShotAgent.create_prompt(
-        tools,
-        prefix="""
+
+    prompt = ChatPromptTemplate.from_messages(
+        [
+            SystemMessagePromptTemplate.from_template(
+                """
 You are an assistant that helps students with course information.
 When answering a question, you must decide whether the answer comes from the FAQ documents (use search_course_docs) or from the course metadata (use fetch_course_meta).
 Do NOT use both tools unless absolutely necessary.
 Always include 'source' in your final answer: either 'chroma' or 'mcp_meta'.
-""",
-        suffix="Answer the following question:",
+"""
+            ),
+            HumanMessagePromptTemplate.from_template("{input}"),
+        ]
     )
-    agent = ZeroShotAgent(llm=llm, prompt=prompt)
-    return AgentExecutor(agent=agent, tools=tools, verbose=True)
+
+    agent = RunnableAgent(prompt=prompt, llm=llm, tools=tools)
+    executor = AgentExecutor(agent=agent, tools=tools, verbose=True)
+    return executor
 
 
 if __name__ == "__main__":
