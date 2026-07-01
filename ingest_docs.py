@@ -5,13 +5,13 @@ from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain.embeddings.base import Embeddings
 from langchain_community.embeddings.ollama import OllamaEmbeddings
 from langchain.schema import Document
-from vector_store.qdrant import QdrantStore
+from vector_store.chromadb import ChromaStore
 
 
-def load_faq_to_qdrant(data_dir: str = "data", collection_name: str = "qdrant_faq"):
+def load_faq_to_chroma(data_dir: str = "data", collection_name: str = "chroma_faq"):
     # Initialize embedder and store
     embedder: Embeddings = OllamaEmbeddings(model="nomic-embed-text")
-    store = QdrantStore(collection_name=collection_name)
+    store = ChromaStore(collection_name=collection_name)
 
     all_docs: List[Document] = []
     splitter = RecursiveCharacterTextSplitter(chunk_size=500, chunk_overlap=50)
@@ -23,9 +23,9 @@ def load_faq_to_qdrant(data_dir: str = "data", collection_name: str = "qdrant_fa
 
     embeddings = embedder.embed_documents([doc.page_content for doc in all_docs])
     store.upsert(embeddings=embeddings, documents=all_docs)
-    print(f"Loaded {len(all_docs)} chunks into QDrant collection '{collection_name}'.")
+    print(f"Loaded {len(all_docs)} chunks into Chroma collection '{collection_name}'.")
     store.close()
 
 
 if __name__ == "__main__":
-    load_faq_to_qdrant()
+    load_faq_to_chroma()

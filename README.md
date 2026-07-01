@@ -1,6 +1,6 @@
-# FAQ Bot with QDrant and MCP‑tool
+# FAQ Bot with ChromaDB and MCP‑tool
 
-This project implements a simple FAQ bot that can answer questions about course content using a vector store (QDrant) or fetch metadata from a mock server. The agent decides which source to use based on the question.
+This project implements a simple FAQ bot that can answer questions about course content using a vector store (ChromaDB) or fetch metadata from a mock server. The agent decides which source to use based on the question.
 
 ## Setup
 
@@ -8,7 +8,13 @@ This project implements a simple FAQ bot that can answer questions about course 
 pip install -r requirements.txt
 ```
 
-### 1. Run Mock Server (optional)
+### 1. Pull Ollama Embedding Model
+
+```bash
+ollama pull nomic-embed-text
+```
+
+### 2. Run Mock Server (optional)
 
 The MCP‑tool expects a local HTTP endpoint that returns course metadata. You can start a simple Python HTTP server:
 
@@ -18,19 +24,15 @@ python -m http.server --directory data 8000
 
 This will serve `meta.json` at `http://localhost:8000/meta`.
 
-### 2. Load FAQ Documents into QDrant
+### 3. Load FAQ Documents into Chroma
 
 ```bash
 python ingest_docs.py
 ```
 
-Make sure you have a running QDrant instance on `localhost:6333`. You can start one with Docker:
+The documents are stored in the local directory `./chroma_faq`.
 
-```bash
-docker run -p 6333:6333 qdrant/qdrant
-```
-
-### 3. Run the Bot
+### 4. Run the Bot
 
 #### Predefined Questions
 
@@ -46,7 +48,7 @@ python cli.py mcp  # Ask about schedule
 python cli.py interactive
 ```
 
-Enter any question and the bot will respond with an answer and indicate the source (`qdrant` or `mcp_meta`).
+Enter any question and the bot will respond with an answer and indicate the source (`chroma` or `mcp_meta`).
 
 ---
 
