@@ -1,0 +1,8 @@
+{
+    "schedule": {
+        "week1": "Introduction to ML",
+        "week2": "Linear Models",
+        "week3": "Probabilistic Models"
+    },
+    "instructors": ["Dr. Alice", "Prof. Bob"]
+}
