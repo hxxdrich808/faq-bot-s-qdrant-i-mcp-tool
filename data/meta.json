@@ -1,0 +1,8 @@
+{
+  "course_name": "Introduction to AI",
+  "schedule": [
+    {"day": "Monday", "time": "10:00-12:00"},
+    {"day": "Wednesday", "time": "14:00-16:00"}
+  ],
+  "instructors": ["Dr. Smith", "Prof. Johnson"]
+}
